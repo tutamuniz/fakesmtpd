@@ -13,9 +13,10 @@ type TelegramBot struct {
 	bot       *tele.Bot
 	channelID *tele.Chat
 	message   chan string
+	Logger    *log.Logger
 }
 
-func NewBot() *TelegramBot {
+func NewBot(logger *log.Logger) *TelegramBot {
 	pref := tele.Settings{
 		Token:  os.Getenv("API_TOKEN"),
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
@@ -23,17 +24,22 @@ func NewBot() *TelegramBot {
 
 	b, err := tele.NewBot(pref)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 		return nil
 	}
 
 	id, _ := strconv.ParseInt(os.Getenv("CHANNEL_ID"), 10, 64)
-	channelID, _ := b.ChatByID(id)
+	channelID, err := b.ChatByID(id)
+	if err != nil {
+		logger.Fatal(err)
+		return nil
+	}
 
 	return &TelegramBot{
 		bot:       b,
 		channelID: channelID,
 		message:   make(chan string),
+		Logger:    logger,
 	}
 }
 
@@ -42,8 +48,13 @@ func (tb *TelegramBot) ProcessMessages() {
 		for {
 			select {
 			case filename := <-m:
+				tb.Logger.Printf("sending message %s\n", filename)
+
 				photo := &tele.Photo{File: tele.FromDisk(filename)} //.FromURL("https://www.mapadomeuceu.com.br/wp-content/uploads/2020/09/Gal%C3%A1xia-de-Andr%C3%B4meda.jpg")}
-				tb.bot.Send(tb.channelID, photo)
+				_, err := tb.bot.Send(tb.channelID, photo)
+				if err != nil {
+					tb.Logger.Println(err)
+				}
 			case <-time.After(time.Second * 5):
 			}
 		}

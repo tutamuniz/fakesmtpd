@@ -18,12 +18,16 @@ func main() {
 	root, _ := fs.Sub(content, "embfs")
 
 	path := os.Args[1]
-	bot := chat.NewBot()
 
 	fakeServer := server.NewServer("0.0.0.0:25", path)
+
+	bot := chat.NewBot(fakeServer.Logger)
+
 	fakeServer.SetChat(bot)
 
+	go bot.ProcessMessages()
 	go webServer(fakeServer, root)
+
 	fakeServer.Run(context.Background())
 }
 
