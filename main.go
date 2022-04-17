@@ -21,7 +21,10 @@ func main() {
 
 	fakeServer := server.NewServer("0.0.0.0:25", path)
 
-	bot := chat.NewBot(fakeServer.Logger)
+	channel := os.Getenv("CHANNEL_ID")
+	api_token := os.Getenv("API_TOKEN")
+
+	bot := chat.NewBot(api_token, channel, fakeServer.Logger)
 
 	fakeServer.SetChat(bot)
 

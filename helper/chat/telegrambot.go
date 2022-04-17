@@ -2,7 +2,6 @@ package chat
 
 import (
 	"log"
-	"os"
 	"strconv"
 	"time"
 
@@ -16,9 +15,9 @@ type TelegramBot struct {
 	Logger    *log.Logger
 }
 
-func NewBot(logger *log.Logger) *TelegramBot {
+func NewBot(api_token, channel_id string, logger *log.Logger) *TelegramBot {
 	pref := tele.Settings{
-		Token:  os.Getenv("API_TOKEN"),
+		Token:  api_token,
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
 	}
 
@@ -28,7 +27,7 @@ func NewBot(logger *log.Logger) *TelegramBot {
 		return nil
 	}
 
-	id, _ := strconv.ParseInt(os.Getenv("CHANNEL_ID"), 10, 64)
+	id, _ := strconv.ParseInt(channel_id, 10, 64)
 	channelID, err := b.ChatByID(id)
 	if err != nil {
 		logger.Fatal(err)
@@ -50,7 +49,7 @@ func (tb *TelegramBot) ProcessMessages() {
 			case filename := <-m:
 				tb.Logger.Printf("sending message %s\n", filename)
 
-				photo := &tele.Photo{File: tele.FromDisk(filename)} //.FromURL("https://www.mapadomeuceu.com.br/wp-content/uploads/2020/09/Gal%C3%A1xia-de-Andr%C3%B4meda.jpg")}
+				photo := &tele.Photo{File: tele.FromDisk(filename)}
 				_, err := tb.bot.Send(tb.channelID, photo)
 				if err != nil {
 					tb.Logger.Println(err)
