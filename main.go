@@ -4,10 +4,10 @@ import (
 	"context"
 	"embed"
 	"io/fs"
-	"net/http"
 	"os"
 
 	"github.com/tutamuniz/fakesmtpd/helper/chat"
+	"github.com/tutamuniz/fakesmtpd/helper/web"
 	"github.com/tutamuniz/fakesmtpd/server"
 )
 
@@ -29,31 +29,7 @@ func main() {
 	fakeServer.SetChat(bot)
 
 	go bot.ProcessMessages()
-	go webServer(fakeServer, root)
+	go web.Server(fakeServer, root)
 
 	fakeServer.Run(context.Background())
-}
-
-func webServer(fake *server.FakeSMTP, content fs.FS) { // terrible, but works
-	http.Handle("/", http.FileServer(http.FS(content)))
-	http.HandleFunc("/capture/enable", func(wr http.ResponseWriter, r *http.Request) {
-		fake.EnableCapture()
-		wr.Write([]byte("ENABLECAP OK"))
-	})
-
-	http.HandleFunc("/capture/disable", func(wr http.ResponseWriter, r *http.Request) {
-		fake.DisableCapture()
-		wr.Write([]byte("DISABLECAP OK"))
-	})
-
-	http.HandleFunc("/capture/status", func(wr http.ResponseWriter, r *http.Request) {
-		status := fake.CaptureStatus()
-		if status {
-			wr.Write([]byte("CAPENABLED"))
-		} else {
-			wr.Write([]byte("CAPDISABLED"))
-		}
-	})
-
-	http.ListenAndServe(":8080", nil)
 }

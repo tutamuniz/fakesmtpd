@@ -17,6 +17,7 @@ import (
 	"github.com/tutamuniz/fakesmtpd/helper/chat"
 )
 
+// HickVision is a handler for hickvision
 type HickVision struct {
 	Logger  *log.Logger
 	Chat    chat.Chat
