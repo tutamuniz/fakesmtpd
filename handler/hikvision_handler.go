@@ -17,26 +17,26 @@ import (
 	"github.com/tutamuniz/fakesmtpd/helper/chat"
 )
 
-// HickVision is a handler for hickvision
-type HickVision struct {
+// HikVision is a handler for hickvision
+type HikVision struct {
 	Logger  *log.Logger
 	Chat    chat.Chat
 	DataDir string
 }
 
-func (hv *HickVision) DoHelo(args string) bool {
+func (hv *HikVision) DoHelo(args string) bool {
 	return true
 }
 
-func (hv *HickVision) DoMailFrom(args string) bool {
+func (hv *HikVision) DoMailFrom(args string) bool {
 	return true
 }
 
-func (hv *HickVision) DoRcptTo(args string) bool {
+func (hv *HikVision) DoRcptTo(args string) bool {
 	return true
 }
 
-func (hv *HickVision) DoData(d []byte) bool {
+func (hv *HikVision) DoData(d []byte) bool {
 	files, err := hv.processData(d)
 	if err != nil {
 		hv.Logger.Println("RET DATA", err)
@@ -51,11 +51,11 @@ func (hv *HickVision) DoData(d []byte) bool {
 	return true
 }
 
-func (hv HickVision) String() string {
-	return "HickVision Handler"
+func (hv HikVision) String() string {
+	return "HikVision Handler"
 }
 
-func (hv *HickVision) processData(data []byte) ([]string, error) {
+func (hv *HikVision) processData(data []byte) ([]string, error) {
 	timestamp := time.Now().Format("2006-01-02-15-04-05")
 
 	email := fmt.Sprintf("%s/email-%s.txt", hv.DataDir, timestamp)

@@ -24,7 +24,7 @@ func (c Connection) chooseHandler() handler.Handler {
 		return &handler.Default{}
 	}
 
-	return &handler.HickVision{
+	return &handler.HikVision{
 		Logger:  c.srv.Logger,
 		Chat:    c.srv.chat,
 		DataDir: c.srv.datadir, // ugly
