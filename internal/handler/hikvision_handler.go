@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tutamuniz/fakesmtpd/helper/chat"
+	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
 )
 
 // HikVision is a handler for hickvision

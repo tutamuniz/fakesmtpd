@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tutamuniz/fakesmtpd/handler"
+	"github.com/tutamuniz/fakesmtpd/internal/handler"
 )
 
 type Connection struct {

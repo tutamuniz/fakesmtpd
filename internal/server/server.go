@@ -7,7 +7,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/tutamuniz/fakesmtpd/helper/chat"
+	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
 )
 
 type FakeSMTP struct {

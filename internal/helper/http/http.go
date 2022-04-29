@@ -1,10 +1,10 @@
-package web
+package http
 
 import (
 	"io/fs"
 	"net/http"
 
-	"github.com/tutamuniz/fakesmtpd/server"
+	"github.com/tutamuniz/fakesmtpd/internal/server"
 )
 
 func Server(fake *server.FakeSMTP, content fs.FS) { // terrible, but works
