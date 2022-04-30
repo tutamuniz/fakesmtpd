@@ -1,13 +1,10 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"log"
 
 	"github.com/tutamuniz/fakesmtpd/internal/config"
-	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
-	"github.com/tutamuniz/fakesmtpd/internal/helper/http"
 	"github.com/tutamuniz/fakesmtpd/internal/server"
 )
 
@@ -23,12 +20,5 @@ func main() {
 
 	fakeServer := server.NewServer(config)
 
-	bot := chat.NewBot(config.ChatConfig, fakeServer.Logger)
-
-	fakeServer.SetChat(bot)
-
-	go bot.ProcessMessages()
-	go http.Server(fakeServer)
-
-	fakeServer.Run(context.Background())
+	fakeServer.Run()
 }

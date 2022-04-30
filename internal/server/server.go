@@ -1,14 +1,15 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
 	"os"
 
 	"github.com/tutamuniz/fakesmtpd/internal/config"
+	"github.com/tutamuniz/fakesmtpd/internal/helper"
 	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
+	"github.com/tutamuniz/fakesmtpd/internal/helper/http"
 )
 
 type FakeSMTP struct {
@@ -16,13 +17,13 @@ type FakeSMTP struct {
 	address   string
 	wrtimeout int
 	rdtimeout int
-	datadir   string
-	Logger    *log.Logger
+	config    *config.Config
+	helpers   []helper.Helper
 	chat      chat.Chat
 }
 
 // NewServer init function
-func NewServer(config config.Config) *FakeSMTP {
+func NewServer(config *config.Config) *FakeSMTP {
 	logfile := config.LoggingConfig.File
 
 	f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o666)
@@ -30,32 +31,19 @@ func NewServer(config config.Config) *FakeSMTP {
 		log.Fatal(err)
 	}
 
-	logger := log.New(f, "fakesmtpd ", log.LstdFlags)
+	config.Logger = log.New(f, "fakesmtpd ", log.LstdFlags)
+
+	bot := chat.NewBot(config)
+	httpserver := http.NewHTTPServer(config)
 
 	return &FakeSMTP{
 		capture:   false,
 		address:   config.MailServerConfig.Address,
 		wrtimeout: 15,
 		rdtimeout: 15,
-		datadir:   config.MailServerConfig.Datadir,
-		Logger:    logger,
+		config:    config,
+		helpers:   []helper.Helper{bot, httpserver},
 	}
-}
-
-func (fake *FakeSMTP) SetChat(chat chat.Chat) {
-	fake.chat = chat
-}
-
-func (fake *FakeSMTP) EnableCapture() {
-	fake.capture = true
-}
-
-func (fake *FakeSMTP) DisableCapture() {
-	fake.capture = false
-}
-
-func (fake FakeSMTP) CaptureStatus() bool {
-	return fake.capture
 }
 
 func (fake *FakeSMTP) newConnection(c net.Conn) *Connection {
@@ -65,9 +53,13 @@ func (fake *FakeSMTP) newConnection(c net.Conn) *Connection {
 	}
 }
 
-func (fake *FakeSMTP) Run(_ context.Context) {
+func (fake *FakeSMTP) Run() {
 	fmt.Printf("Starting server %s\n", fake.address)
-	fake.Logger.Printf("Starting server %s\n", fake.address)
+	fake.config.Logger.Printf("Starting server %s\n", fake.address)
+
+	for h := range fake.helpers {
+		fake.helpers[h].Start()
+	}
 
 	server, err := net.Listen("tcp", fake.address)
 	if err != nil {
@@ -79,7 +71,7 @@ func (fake *FakeSMTP) Run(_ context.Context) {
 	for {
 		conn, err := server.Accept()
 		if err != nil {
-			fake.Logger.Printf("ERR: %s", err)
+			fake.config.Logger.Printf("ERR: %s", err)
 		}
 		c := fake.newConnection(conn)
 		go c.Handle()

@@ -1,6 +1,8 @@
 package config
 
 import (
+	"log"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -9,6 +11,8 @@ type Config struct {
 	LoggingConfig    LoggingConfig    `toml:"logging"`
 	ChatConfig       ChatConfig       `toml:"chat"`
 	HTTPServerConfig HTTPServerConfig `toml:"http_server"`
+	CaptureStatus    bool             `toml:"capture_status"`
+	Logger           *log.Logger      `toml:"-"`
 }
 
 type MailServerConfig struct {
@@ -29,8 +33,8 @@ type HTTPServerConfig struct {
 	Address string
 }
 
-func LoadConfig(path string) (Config, error) {
-	config := Config{}
+func LoadConfig(path string) (*Config, error) {
+	config := &Config{}
 	err := config.Load(path)
 	return config, err
 }
@@ -42,4 +46,12 @@ func (c *Config) Load(path string) error {
 	}
 
 	return nil
+}
+
+func (c *Config) EnableCapture() {
+	c.CaptureStatus = true
+}
+
+func (c *Config) DisableCapture() {
+	c.CaptureStatus = false
 }

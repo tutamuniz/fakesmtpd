@@ -16,9 +16,11 @@ type TelegramBot struct {
 	Logger    *log.Logger
 }
 
-func NewBot(conf config.ChatConfig, logger *log.Logger) *TelegramBot {
+func NewBot(conf *config.Config) *TelegramBot {
+	logger := conf.Logger
+
 	pref := tele.Settings{
-		Token:  conf.APIToken,
+		Token:  conf.ChatConfig.APIToken,
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
 	}
 
@@ -28,7 +30,7 @@ func NewBot(conf config.ChatConfig, logger *log.Logger) *TelegramBot {
 		return nil
 	}
 
-	id, _ := strconv.ParseInt(conf.ChannelID, 10, 64)
+	id, _ := strconv.ParseInt(conf.ChatConfig.ChannelID, 10, 64)
 	channelID, err := b.ChatByID(id)
 	if err != nil {
 		logger.Fatal(err)
@@ -43,7 +45,7 @@ func NewBot(conf config.ChatConfig, logger *log.Logger) *TelegramBot {
 	}
 }
 
-func (tb *TelegramBot) ProcessMessages() {
+func (tb *TelegramBot) processMessages() {
 	go func(m chan string) {
 		for {
 			select {
@@ -61,6 +63,10 @@ func (tb *TelegramBot) ProcessMessages() {
 	}(tb.message)
 
 	tb.bot.Start()
+}
+
+func (tb *TelegramBot) Start() {
+	go tb.processMessages()
 }
 
 func (tb *TelegramBot) SendMessage(user, msg string) {

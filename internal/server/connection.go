@@ -25,9 +25,9 @@ func (c Connection) chooseHandler() handler.Handler {
 	}
 
 	return &handler.HikVision{
-		Logger:  c.srv.Logger,
+		Logger:  c.srv.config.Logger,
 		Chat:    c.srv.chat,
-		DataDir: c.srv.datadir, // ugly
+		DataDir: c.srv.config.MailServerConfig.Datadir, // ugly
 	}
 }
 
@@ -37,7 +37,7 @@ func (c *Connection) Handle() {
 
 	handler := c.chooseHandler()
 
-	c.srv.Logger.Printf("Using %s\n", handler)
+	c.srv.config.Logger.Printf("Using %s\n", handler)
 
 	buff := bytes.Buffer{}
 	data := bytes.Buffer{}
@@ -55,7 +55,7 @@ func (c *Connection) Handle() {
 	for {
 		b, err := c.br.ReadSlice('\n')
 		if err != nil {
-			c.srv.Logger.Printf("ERR: %s", err)
+			c.srv.config.Logger.Printf("ERR: %s", err)
 			return
 		}
 
