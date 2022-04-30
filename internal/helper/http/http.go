@@ -28,24 +28,41 @@ func (h *Server) Start() {
 func (h *Server) processMessages() {
 	content, _ := fs.Sub(content, "web")
 
+	logger := h.config.Logger
+
 	http.Handle("/", http.FileServer(http.FS(content)))
 	http.HandleFunc("/capture/enable", func(wr http.ResponseWriter, r *http.Request) {
 		h.config.EnableCapture()
-		wr.Write([]byte("ENABLECAP OK"))
+		_, err := wr.Write([]byte("ENABLECAP OK"))
+		if err != nil {
+			h.config.Logger.Printf("Error: %s", err)
+		}
 	})
 
 	http.HandleFunc("/capture/disable", func(wr http.ResponseWriter, r *http.Request) {
 		h.config.DisableCapture()
-		wr.Write([]byte("DISABLECAP OK"))
+		_, err := wr.Write([]byte("DISABLECAP OK"))
+		if err != nil {
+			h.config.Logger.Printf("Error: %s", err)
+		}
 	})
 
 	http.HandleFunc("/capture/status", func(wr http.ResponseWriter, r *http.Request) {
 		if h.config.CaptureStatus {
-			wr.Write([]byte("CAPENABLED"))
+			_, err := wr.Write([]byte("CAPENABLED"))
+			if err != nil {
+				h.config.Logger.Printf("Error writing to response: %s", err)
+			}
+
 		} else {
-			wr.Write([]byte("CAPDISABLED"))
+			_, err := wr.Write([]byte("CAPDISABLED"))
+			if err != nil {
+				h.config.Logger.Printf("Error writing to response: %s", err)
+			}
+
 		}
 	})
 
-	http.ListenAndServe(":8080", nil)
+	logger.Println("Starting HTTP server")
+	logger.Fatal(http.ListenAndServe(h.config.HTTPServerConfig.Address, nil))
 }
