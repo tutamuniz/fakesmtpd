@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/tutamuniz/fakesmtpd/internal/config"
 	tele "gopkg.in/telebot.v3"
 )
 
@@ -15,9 +16,9 @@ type TelegramBot struct {
 	Logger    *log.Logger
 }
 
-func NewBot(apiToken, channel_id string, logger *log.Logger) *TelegramBot {
+func NewBot(conf config.ChatConfig, logger *log.Logger) *TelegramBot {
 	pref := tele.Settings{
-		Token:  apiToken,
+		Token:  conf.APIToken,
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
 	}
 
@@ -27,7 +28,7 @@ func NewBot(apiToken, channel_id string, logger *log.Logger) *TelegramBot {
 		return nil
 	}
 
-	id, _ := strconv.ParseInt(channel_id, 10, 64)
+	id, _ := strconv.ParseInt(conf.ChannelID, 10, 64)
 	channelID, err := b.ChatByID(id)
 	if err != nil {
 		logger.Fatal(err)

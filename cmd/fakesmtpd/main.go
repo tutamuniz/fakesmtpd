@@ -21,12 +21,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fakeServer := server.NewServer(config.MailServerConfig.Address, config.MailServerConfig.Datadir)
+	fakeServer := server.NewServer(config)
 
-	channel := config.ChatConfig.ChannelID
-	apiToken := config.ChatConfig.APIToken
-
-	bot := chat.NewBot(apiToken, channel, fakeServer.Logger)
+	bot := chat.NewBot(config.ChatConfig, fakeServer.Logger)
 
 	fakeServer.SetChat(bot)
 

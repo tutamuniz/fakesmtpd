@@ -7,6 +7,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/tutamuniz/fakesmtpd/internal/config"
 	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
 )
 
@@ -21,8 +22,9 @@ type FakeSMTP struct {
 }
 
 // NewServer init function
-func NewServer(address, datadir string) *FakeSMTP {
-	logfile := "fakesmtpd.log" // load from config
+func NewServer(config config.Config) *FakeSMTP {
+	logfile := config.LoggingConfig.File
+
 	f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o666)
 	if err != nil {
 		log.Fatal(err)
@@ -32,10 +34,10 @@ func NewServer(address, datadir string) *FakeSMTP {
 
 	return &FakeSMTP{
 		capture:   false,
-		address:   address,
+		address:   config.MailServerConfig.Address,
 		wrtimeout: 15,
 		rdtimeout: 15,
-		datadir:   datadir,
+		datadir:   config.MailServerConfig.Datadir,
 		Logger:    logger,
 	}
 }
