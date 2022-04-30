@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"embed"
-	"io/fs"
 	"os"
 
 	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
@@ -11,11 +9,10 @@ import (
 	"github.com/tutamuniz/fakesmtpd/internal/server"
 )
 
-//go:embed web/index.html
-var content embed.FS
+
 
 func main() {
-	root, _ := fs.Sub(content, "web")
+	
 
 	path := os.Args[1]
 
@@ -29,7 +26,7 @@ func main() {
 	fakeServer.SetChat(bot)
 
 	go bot.ProcessMessages()
-	go http.Server(fakeServer, root)
+	go http.Server(fakeServer)
 
 	fakeServer.Run(context.Background())
 }
