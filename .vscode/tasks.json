@@ -24,6 +24,12 @@
             "dependsOrder": "sequence",
             "dependsOn":["GoSec", "GolangCI"]
         
+    }, 
+    {
+        "label": "GoFumpter",
+        "type": "shell",
+        "command": "gofumpt -w '${file}'",
+        "group": "test", 
     }
     ]
 }

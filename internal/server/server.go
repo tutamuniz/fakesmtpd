@@ -63,7 +63,7 @@ func (fake *FakeSMTP) newConnection(c net.Conn) *Connection {
 	}
 }
 
-func (fake *FakeSMTP) Run(ctx context.Context) {
+func (fake *FakeSMTP) Run(_ context.Context) {
 	fmt.Printf("Starting server %s\n", fake.address)
 	fake.Logger.Printf("Starting server %s\n", fake.address)
 

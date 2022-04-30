@@ -15,9 +15,9 @@ type TelegramBot struct {
 	Logger    *log.Logger
 }
 
-func NewBot(api_token, channel_id string, logger *log.Logger) *TelegramBot {
+func NewBot(apiToken, channel_id string, logger *log.Logger) *TelegramBot {
 	pref := tele.Settings{
-		Token:  api_token,
+		Token:  apiToken,
 		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
 	}
 

@@ -9,11 +9,7 @@ import (
 	"github.com/tutamuniz/fakesmtpd/internal/server"
 )
 
-
-
 func main() {
-	
-
 	path := os.Args[1]
 
 	fakeServer := server.NewServer("0.0.0.0:25", path)

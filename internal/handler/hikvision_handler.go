@@ -17,7 +17,7 @@ import (
 	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
 )
 
-// HikVision is a handler for hickvision
+// HikVision is a handler for hikvision
 type HikVision struct {
 	Logger  *log.Logger
 	Chat    chat.Chat
@@ -130,7 +130,10 @@ func (hv *HikVision) processData(data []byte) ([]string, error) {
 			defer im.Close()
 
 			imr := bufio.NewWriter(im)
-			imr.Write(b)
+			_, err = imr.Write(b)
+			if err != nil {
+				hv.Logger.Println("ERROR WRITE:", err)
+			}
 			imr.Flush()
 
 		}

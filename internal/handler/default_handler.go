@@ -1,8 +1,6 @@
 package handler
 
-type Default struct {
-
-}
+type Default struct{}
 
 func (s *Default) DoHelo(args string) bool {
 	return true
