@@ -2,20 +2,29 @@ package main
 
 import (
 	"context"
-	"os"
+	"flag"
+	"log"
 
+	"github.com/tutamuniz/fakesmtpd/internal/config"
 	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
 	"github.com/tutamuniz/fakesmtpd/internal/helper/http"
 	"github.com/tutamuniz/fakesmtpd/internal/server"
 )
 
+var configPath = flag.String("config", "config.toml", "Path to config file")
+
 func main() {
-	path := os.Args[1]
+	flag.Parse()
 
-	fakeServer := server.NewServer("0.0.0.0:25", path)
+	config, err := config.LoadConfig(*configPath)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	channel := os.Getenv("CHANNEL_ID")
-	apiToken := os.Getenv("API_TOKEN")
+	fakeServer := server.NewServer(config.MailServerConfig.Address, config.MailServerConfig.Datadir)
+
+	channel := config.ChatConfig.ChannelID
+	apiToken := config.ChatConfig.APIToken
 
 	bot := chat.NewBot(apiToken, channel, fakeServer.Logger)
 

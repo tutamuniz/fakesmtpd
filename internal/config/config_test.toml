@@ -1,0 +1,13 @@
+[mail_server]
+address="0.0.0.0:25"
+datadir="./data"
+
+[chat]
+api_token="API_TOKEN"
+channel_id="CHANNEL_ID"
+
+[http_server]
+address="0.0.0.0:8080"
+
+[logging]
+file="fakesmtpd.log"
