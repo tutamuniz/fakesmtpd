@@ -16,8 +16,10 @@ type Config struct {
 }
 
 type MailServerConfig struct {
-	Address string
-	Datadir string
+	Address      string
+	Datadir      string
+	WriteTimeout int `toml:"write_timeout"`
+	ReadTimeout  int `toml:"read_timeout"`
 }
 
 type LoggingConfig struct {
@@ -45,6 +47,8 @@ func (c *Config) Load(path string) error {
 		return err
 	}
 
+	c.validate()
+
 	return nil
 }
 
@@ -54,4 +58,22 @@ func (c *Config) EnableCapture() {
 
 func (c *Config) DisableCapture() {
 	c.CaptureStatus = false
+}
+
+func (c *Config) validate() {
+	if c.MailServerConfig.Address == "" {
+		c.MailServerConfig.Address = ":25"
+	}
+
+	if c.MailServerConfig.WriteTimeout == 0 {
+		c.MailServerConfig.WriteTimeout = 15
+	}
+
+	if c.MailServerConfig.ReadTimeout == 0 {
+		c.MailServerConfig.ReadTimeout = 15
+	}
+
+	if c.HTTPServerConfig.Address == "" {
+		c.HTTPServerConfig.Address = ":8080"
+	}
 }

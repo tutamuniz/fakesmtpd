@@ -8,26 +8,29 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tutamuniz/fakesmtpd/internal/config"
 	"github.com/tutamuniz/fakesmtpd/internal/handler"
+	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
 )
 
 type Connection struct {
-	srv  *FakeSMTP
-	conn net.Conn
-	br   *bufio.Reader
-	bw   *bufio.Writer
+	config *config.Config
+	chat   chat.Chat
+	conn   net.Conn
+	br     *bufio.Reader
+	bw     *bufio.Writer
 }
 
 func (c Connection) chooseHandler() handler.Handler {
 	// read from config
-	if !c.srv.capture {
+	if !c.config.CaptureStatus {
 		return &handler.Default{}
 	}
 
 	return &handler.HikVision{
-		Logger:  c.srv.config.Logger,
-		Chat:    c.srv.chat,
-		DataDir: c.srv.config.MailServerConfig.Datadir, // ugly
+		Logger:  c.config.Logger,
+		Chat:    c.chat,
+		DataDir: c.config.MailServerConfig.Datadir, // ugly
 	}
 }
 
@@ -37,7 +40,7 @@ func (c *Connection) Handle() {
 
 	handler := c.chooseHandler()
 
-	c.srv.config.Logger.Printf("Using %s\n", handler)
+	c.config.Logger.Printf("Using %s\n", handler)
 
 	buff := bytes.Buffer{}
 	data := bytes.Buffer{}
@@ -45,8 +48,8 @@ func (c *Connection) Handle() {
 	c.br = bufio.NewReader(c.conn)
 	c.bw = bufio.NewWriter(c.conn)
 
-	if c.srv.rdtimeout != 0 {
-		_ = c.conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(c.srv.rdtimeout)))
+	if c.config.MailServerConfig.ReadTimeout != 0 {
+		_ = c.conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(c.config.MailServerConfig.ReadTimeout)))
 	}
 
 	c.write("220 ESMTP  fakesmtp 0.1b\r\n")
@@ -55,7 +58,7 @@ func (c *Connection) Handle() {
 	for {
 		b, err := c.br.ReadSlice('\n')
 		if err != nil {
-			c.srv.config.Logger.Printf("ERR: %s", err)
+			c.config.Logger.Printf("ERR: %s", err)
 			return
 		}
 
@@ -89,8 +92,8 @@ func (c *Connection) Handle() {
 }
 
 func (c *Connection) write(s string) {
-	if c.srv.wrtimeout != 0 {
-		_ = c.conn.SetWriteDeadline(time.Now().Add(time.Second * time.Duration(c.srv.wrtimeout)))
+	if c.config.MailServerConfig.WriteTimeout != 0 {
+		_ = c.conn.SetWriteDeadline(time.Now().Add(time.Second * time.Duration(c.config.MailServerConfig.WriteTimeout)))
 	}
 
 	fmt.Fprintf(c.bw, "%s\r\n", s)
