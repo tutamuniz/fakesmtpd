@@ -18,3 +18,7 @@
 data/*
 *.log
 .env
+test/*.toml
+test/data/*.jpg
+test/data/*.txt
+
