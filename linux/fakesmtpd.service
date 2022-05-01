@@ -1,0 +1,12 @@
+[Unit]
+Description = Fake SMTPd for HikVision Camera
+After = network.target
+
+[Service]
+ExecStart = /PATH_TO_BINARY/fakesmtpd
+WorkingDirectory = /PATH_TO_BINARY
+LogDirectory = /PATH_TO_BINARY/logs
+
+
+[Install]
+WantedBy = multi-user.target
