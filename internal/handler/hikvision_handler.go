@@ -39,7 +39,7 @@ func (hv *HikVision) DoRcptTo(args string) bool {
 func (hv *HikVision) DoData(d []byte) bool {
 	files, err := hv.processData(d)
 	if err != nil {
-		hv.Logger.Println("RET DATA", err)
+		hv.Logger.Println("processData(DoData())", err)
 	}
 
 	for _, file := range files {
@@ -112,7 +112,7 @@ func (hv *HikVision) processData(data []byte) ([]string, error) {
 				_, err = br.Write(buffer[:n])
 
 				if err != nil {
-					hv.Logger.Println("ERROR DATA:", err)
+					hv.Logger.Println("ERROR Writing Buffer:", err)
 					break
 				}
 
@@ -132,7 +132,7 @@ func (hv *HikVision) processData(data []byte) ([]string, error) {
 			imr := bufio.NewWriter(im)
 			_, err = imr.Write(b)
 			if err != nil {
-				hv.Logger.Println("ERROR WRITE:", err)
+				hv.Logger.Println("ERROR Writing Image:", err)
 			}
 			imr.Flush()
 

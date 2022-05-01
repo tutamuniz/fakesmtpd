@@ -41,6 +41,7 @@ func (c *Connection) Handle() {
 	handler := c.chooseHandler()
 
 	c.config.Logger.Printf("Using %s\n", handler)
+	c.config.Logger.Printf("Connection from: %s\n", c.conn.RemoteAddr().String())
 
 	buff := bytes.Buffer{}
 	data := bytes.Buffer{}
@@ -58,7 +59,7 @@ func (c *Connection) Handle() {
 	for {
 		b, err := c.br.ReadSlice('\n')
 		if err != nil {
-			c.config.Logger.Printf("ERR: %s", err)
+			c.config.Logger.Printf("ERR(ReadingSlice): %s ", err)
 			return
 		}
 
