@@ -20,8 +20,7 @@ type FakeSMTP struct {
 
 // NewServer init function
 func NewServer(config *config.Config) *FakeSMTP {
-	
-	bot := chat.NewBot(config)
+	bot := chat.NewTelegramBot(config)
 	httpserver := http.NewHTTPServer(config)
 
 	return &FakeSMTP{
@@ -40,7 +39,7 @@ func (fake *FakeSMTP) newConnection(conn net.Conn) *Connection {
 	c, ok := cc.(chat.Chat)
 
 	if !ok {
-		panic("chat.Chat interface is not implemented")
+		panic("chat.Chat interface is not implemented") // TODO: Fix this
 	}
 
 	return &Connection{

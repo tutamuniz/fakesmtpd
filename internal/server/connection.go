@@ -15,14 +15,13 @@ import (
 
 type Connection struct {
 	config *config.Config
-	chat   chat.Chat
+	chat   chat.Chat // TODO: remove this
 	conn   net.Conn
 	br     *bufio.Reader
 	bw     *bufio.Writer
 }
 
 func (c Connection) chooseHandler() handler.Handler {
-	// read from config
 	if !c.config.CaptureStatus {
 		return &handler.Default{}
 	}

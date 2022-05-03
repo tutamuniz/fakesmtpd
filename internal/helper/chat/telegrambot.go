@@ -16,7 +16,7 @@ type TelegramBot struct {
 	Logger    logging.Logger
 }
 
-func NewBot(conf *config.Config) *TelegramBot {
+func NewTelegramBot(conf *config.Config) *TelegramBot {
 	logger := conf.Logger
 
 	pref := tele.Settings{
@@ -69,6 +69,10 @@ func (tb *TelegramBot) Start() {
 	go tb.processMessages()
 }
 
-func (tb *TelegramBot) SendMessage(user, msg string) {
+func (tb *TelegramBot) SendMessage(user, msg string) { // improve this
 	tb.message <- msg
+}
+
+func (tb *TelegramBot) SendFile(user, filename string) { // improve this
+	tb.message <- filename
 }
