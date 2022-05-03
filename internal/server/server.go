@@ -2,9 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
 	"net"
-	"os"
 
 	"github.com/tutamuniz/fakesmtpd/internal/config"
 	"github.com/tutamuniz/fakesmtpd/internal/helper"
@@ -22,15 +20,7 @@ type FakeSMTP struct {
 
 // NewServer init function
 func NewServer(config *config.Config) *FakeSMTP {
-	logfile := config.LoggingConfig.File
-
-	f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o666)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	config.Logger = log.New(f, "fakesmtpd ", log.LstdFlags)
-
+	
 	bot := chat.NewBot(config)
 	httpserver := http.NewHTTPServer(config)
 

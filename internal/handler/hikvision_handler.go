@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"log"
 	"mime"
 	"mime/multipart"
 	"net/mail"
@@ -15,11 +14,12 @@ import (
 	"time"
 
 	"github.com/tutamuniz/fakesmtpd/internal/helper/chat"
+	"github.com/tutamuniz/fakesmtpd/pkg/logging"
 )
 
 // HikVision is a handler for hikvision
 type HikVision struct {
-	Logger  *log.Logger
+	Logger  logging.Logger
 	Chat    chat.Chat
 	DataDir string
 }

@@ -39,7 +39,7 @@ func (h *Server) processMessages() {
 	http.HandleFunc("/capture/status", h.statusHandler)
 
 	logger.Println("Starting HTTP server")
-	logger.Fatal(http.ListenAndServe(h.config.HTTPServerConfig.Address, nil))
+	logger.Fatal("%s", http.ListenAndServe(h.config.HTTPServerConfig.Address, nil))
 }
 
 func (h *Server) enableHandler(wr http.ResponseWriter, r *http.Request) {

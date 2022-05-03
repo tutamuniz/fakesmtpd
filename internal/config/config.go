@@ -2,8 +2,10 @@ package config
 
 import (
 	"log"
+	"os"
 
 	"github.com/BurntSushi/toml"
+	"github.com/tutamuniz/fakesmtpd/pkg/logging"
 )
 
 type Config struct {
@@ -12,7 +14,7 @@ type Config struct {
 	ChatConfig       ChatConfig       `toml:"chat"`
 	HTTPServerConfig HTTPServerConfig `toml:"http_server"`
 	CaptureStatus    bool             `toml:"capture_status"`
-	Logger           *log.Logger      `toml:"-"`
+	Logger           logging.Logger   `toml:"-"`
 }
 
 type MailServerConfig struct {
@@ -37,11 +39,11 @@ type HTTPServerConfig struct {
 
 func LoadConfig(path string) (*Config, error) {
 	config := &Config{}
-	err := config.Load(path)
+	err := config.load(path)
 	return config, err
 }
 
-func (c *Config) Load(path string) error {
+func (c *Config) load(path string) error {
 	_, err := toml.DecodeFile(path, &c)
 	if err != nil {
 		return err
@@ -50,6 +52,17 @@ func (c *Config) Load(path string) error {
 	c.validate()
 
 	return nil
+}
+
+func (c *Config) AddLogger(logger logging.Logger) {
+	f, err := os.OpenFile(c.LoggingConfig.File, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0o666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	logger.SetOutput(f)
+
+	c.Logger = logger
 }
 
 func (c *Config) EnableCapture() {

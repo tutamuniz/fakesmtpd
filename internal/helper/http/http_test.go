@@ -2,17 +2,16 @@ package http
 
 import (
 	"io"
-	"log"
 	"net/http"
-	"os"
 	"testing"
 
 	"github.com/tutamuniz/fakesmtpd/internal/config"
+	"github.com/tutamuniz/fakesmtpd/pkg/logging"
 )
 
 func TestHttpHelper(t *testing.T) {
 	config := &config.Config{
-		Logger: log.New(os.Stdout, "", log.LstdFlags),
+		Logger: logging.NewLogrusLogging(),
 		HTTPServerConfig: config.HTTPServerConfig{
 			Address: ":8080",
 		},

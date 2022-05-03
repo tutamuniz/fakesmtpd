@@ -1,11 +1,11 @@
 package chat
 
 import (
-	"log"
 	"strconv"
 	"time"
 
 	"github.com/tutamuniz/fakesmtpd/internal/config"
+	"github.com/tutamuniz/fakesmtpd/pkg/logging"
 	tele "gopkg.in/telebot.v3"
 )
 
@@ -13,7 +13,7 @@ type TelegramBot struct {
 	bot       *tele.Bot
 	channelID *tele.Chat
 	message   chan string
-	Logger    *log.Logger
+	Logger    logging.Logger
 }
 
 func NewBot(conf *config.Config) *TelegramBot {
@@ -26,14 +26,14 @@ func NewBot(conf *config.Config) *TelegramBot {
 
 	b, err := tele.NewBot(pref)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatal("%s", err)
 		return nil
 	}
 
 	id, _ := strconv.ParseInt(conf.ChatConfig.ChannelID, 10, 64)
 	channelID, err := b.ChatByID(id)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatal("%s", err)
 		return nil
 	}
 

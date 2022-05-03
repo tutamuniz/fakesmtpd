@@ -4,7 +4,7 @@ import "testing"
 
 func TestConfig(t *testing.T) {
 	config := Config{}
-	err := config.Load("config_test.toml")
+	err := config.load("config_test.toml")
 	if err != nil {
 		t.Errorf("Error loading config: %v", err)
 	}
