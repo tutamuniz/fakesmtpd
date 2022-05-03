@@ -44,3 +44,9 @@ func NewLogrusLogging() *Logging {
 		Logger: NewLogrusAdpter(logger),
 	}
 }
+
+func NewLogStdLogging() *Logging {
+	return &Logging{
+		Logger: NewLogStdAdapter(),
+	}
+}
