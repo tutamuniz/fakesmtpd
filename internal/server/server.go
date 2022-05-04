@@ -50,8 +50,8 @@ func (fake *FakeSMTP) newConnection(conn net.Conn) *Connection {
 }
 
 func (fake *FakeSMTP) Run() {
-	fmt.Printf("Starting server %s\n", fake.address)
-	fake.config.Logger.Printf("Starting server %s\n", fake.address)
+	banner := fmt.Sprintf("Starting FakeSMTPd %s server %s\n", fake.config.Version, fake.address)
+	fake.config.Logger.Println(banner)
 
 	go fake.Chat.Start()
 	go fake.HTTPServer.Start()

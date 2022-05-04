@@ -52,7 +52,8 @@ func (c *Connection) Handle() {
 		_ = c.conn.SetReadDeadline(time.Now().Add(time.Second * time.Duration(c.config.MailServerConfig.ReadTimeout)))
 	}
 
-	c.write("220 ESMTP  fakesmtp 0.1b\r\n")
+	banner := fmt.Sprintf("220 ESMTP  FakeSMTPd %s\r\n", c.config.Version)
+	c.write(banner)
 	c.bw.Flush()
 
 	for {

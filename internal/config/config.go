@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/BurntSushi/toml"
+	"github.com/tutamuniz/fakesmtpd/internal/version"
 	"github.com/tutamuniz/fakesmtpd/pkg/logging"
 )
 
@@ -15,6 +16,7 @@ type Config struct {
 	HTTPServerConfig HTTPServerConfig `toml:"http_server"`
 	CaptureStatus    bool             `toml:"capture_status"`
 	Logger           logging.Logger   `toml:"-"`
+	Version          string           `toml:"-"`
 }
 
 type MailServerConfig struct {
@@ -39,6 +41,8 @@ type HTTPServerConfig struct {
 
 func LoadConfig(path string) (*Config, error) {
 	config := &Config{}
+	// Set Version
+	config.Version = version.Version
 	err := config.load(path)
 	return config, err
 }
